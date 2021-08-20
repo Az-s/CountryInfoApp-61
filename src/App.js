@@ -6,13 +6,13 @@ import axios from 'axios';
 import Navbars from './components/Navbar/Navbar';
 import CountrySide from './components/CountrySide/CountrySide';
 import CountyInfo from './components/CountryInfo/CountyInfo';
-import { Country_URL , CoutryInfo_URL } from './config';
+import { Country_URL, CoutryInfo_URL } from './config';
 import './App.css';
 
 const App = () => {
 
   const [countries, setCountries] = useState([]);
-  const [countryInfo , setCountryInfo] = useState([]);
+  const [countryInfo, setCountryInfo] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -35,6 +35,26 @@ const App = () => {
 
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(CoutryInfo_URL + 'ARG');
+        const countryInfo = response.data;
+
+        console.log(response);
+
+        setCountryInfo(countryInfo);
+        setError(null);
+      } catch (e) {
+        setError('Something went wrong ' + e.response.status);
+      }
+    }
+
+    fetchData().catch(e => console.error(e));
+
+  }, []);
+
+
 
 
   return (
@@ -47,10 +67,10 @@ const App = () => {
         }
         <Row>
           <Col sm={4}>
-            <CountrySide countries={countries}/>
+            <CountrySide countries={countries} />
           </Col>
           <Col sm={8}>
-            <CountyInfo />
+            <CountyInfo countryInfo={countryInfo}/>
           </Col>
         </Row>
       </Container>
