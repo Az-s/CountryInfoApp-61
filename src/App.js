@@ -6,13 +6,14 @@ import axios from 'axios';
 import Navbars from './components/Navbar/Navbar';
 import CountrySide from './components/CountrySide/CountrySide';
 import CountyInfo from './components/CountryInfo/CountyInfo';
-import { Country_URL, CoutryInfo_URL } from './config';
+import { Country_URL, CoutryInfo_URL, CoutryInfo_URL2 } from './config';
 import './App.css';
 
 const App = () => {
 
   const [countries, setCountries] = useState([]);
   const [countryInfo, setCountryInfo] = useState([]);
+  const [countryBorders, setCountryBorders] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -20,8 +21,6 @@ const App = () => {
       try {
         const response = await axios.get(Country_URL);
         const countries = response.data;
-
-        console.log(response);
 
         setCountries(countries);
         setError(null);
@@ -35,27 +34,31 @@ const App = () => {
 
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(CoutryInfo_URL + 'ARG');
-        const countryInfo = response.data;
 
-        console.log(response);
+  const fetchDatas = async (event) => {
+    const country = event.currentTarget.textContent;
 
-        setCountryInfo(countryInfo);
-        setError(null);
-      } catch (e) {
-        setError('Something went wrong ' + e.response.status);
-      }
+    try {
+      const response = await axios.get(CoutryInfo_URL + country);
+      let countryInfo = response.data[0];
+
+      let border = response[0];
+      let allCountryBorder = border.borders;
+      const countryBorders = await Promise.all(allCountryBorder);
+      setCountryBorders(countryBorders);
+
+      setCountryInfo(countryInfo);
+      console.log(border  )
+      
+      setError(null);
+    } catch (e) {
+      setError('Something went wrong ' + e.response.status);
     }
-
-    fetchData().catch(e => console.error(e));
-
+  }
+  
+  useEffect(() => {
+    fetchDatas().catch(e => console.error(e));
   }, []);
-
-
-
 
   return (
     <div className="App">
@@ -67,10 +70,10 @@ const App = () => {
         }
         <Row>
           <Col sm={4}>
-            <CountrySide countries={countries} />
+            <CountrySide countries={countries} onClick={fetchDatas.bind(this)} />
           </Col>
           <Col sm={8}>
-            <CountyInfo countryInfo={countryInfo}/>
+            <CountyInfo countryInfo={countryInfo} countryBorders={countryBorders} />
           </Col>
         </Row>
       </Container>

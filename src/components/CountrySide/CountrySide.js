@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 
-const CountrySide = ({ countries }) => {
+const CountrySide = ({ countries , onClick}) => {
     return (
         <>
             <Card border="secondary" style={{ width: '100%', marginTop: '1rem', }}>
@@ -12,7 +12,7 @@ const CountrySide = ({ countries }) => {
                         overflowY: 'auto'
                     }}>
                         {countries.map((contry, key) => (
-                            <ListGroup.Item action variant="light" key={key}>
+                            <ListGroup.Item action variant="light" key={key} onClick={event => onClick.onClick(event)}>
                                 {contry.name}
                             </ListGroup.Item>
                         ))}
